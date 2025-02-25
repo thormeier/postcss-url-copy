@@ -34,29 +34,30 @@ module.exports = (opts = {}) => {
 
     Declaration (decl) {
       if (decl.value.startsWith('url(')) {
-        let urlPath = decl.value.replace(/url\(\s*['"]?(.*?)['"]?\s*\)/ig, '$1')
+        decl.value.match(/url\(\s*['"]?(.*?)['"]?\s*\)/ig).map(url => {
+          return url.replace(/url\(\s*['"]?(.*?)['"]?\s*\)/ig, '$1')
+        })
+          .filter(url => !url.startsWith('data') && !url.endsWith('?copied'))
+          .forEach(url => {
+            const urlPath = opts.transformUrlBeforeLoad(url)
+            const resolvedUrlPath = resolve(urlPath)
+            if (!existsSync(resolvedUrlPath)) {
+              throw new Error(`Asset not found: ${resolvedUrlPath}`)
+            }
 
-        urlPath = opts.transformUrlBeforeLoad(urlPath)
+            if (!existsSync(opts.assetsDestPath)) {
+              mkdirSync(opts.assetsDestPath, { recursive: true })
+            }
 
-        const resolvedPathUrl = resolve(urlPath)
+            const fileName = basename(resolvedUrlPath)
+            let destPath = opts.assetsDestPath + sep + fileName
 
-        if (!existsSync(resolvedPathUrl)) {
-          throw new Error(`Asset not found: ${resolvedPathUrl}`)
-        }
+            copyFileSync(resolvedUrlPath, destPath)
 
-        if (!existsSync(opts.assetsDestPath)) {
-          mkdirSync(opts.assetsDestPath, { recursive: true })
-        }
+            destPath = opts.transformUrlBeforeWrite(destPath)
 
-        const fileName = basename(resolvedPathUrl)
-
-        let destPath = opts.assetsDestPath + sep + fileName
-
-        copyFileSync(resolvedPathUrl, destPath)
-
-        destPath = opts.transformUrlBeforeWrite(destPath)
-
-        decl.value = `url(${destPath})`
+            decl.value = decl.value.replace(url, destPath + '?copied')
+          })
       }
     }
   }

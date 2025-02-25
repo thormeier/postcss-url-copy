@@ -10,7 +10,7 @@ the CSS file).
 {
   destPath: string // Absolute path to where to write the distributable files lie
   assetsDestPath: string // Absolute path to where to write the assets to
-  transformUrlBeforeLoad: (url: string) => string // To transform the URL before the fileon disk is being loaded
-  transformUrlBeforeWrite: (url: string) => string // To transform the URL before its written to the CSS file, gets result of transformUrlBeforeLoad
+  transformUrlBeforeLoad: (url: string) => string // To transform the URL before the file on disk is being loaded
+  transformUrlBeforeWrite: (url: string) => string // To transform the URL before it's written to the CSS file, gets result of transformUrlBeforeLoad
 }
 ```
