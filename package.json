@@ -4,7 +4,7 @@
   "description": "PostCSS plugin url() copy",
   "keywords": ["postcss", "css", "postcss-plugin", "postcss-url-copy"],
   "scripts": {
-    "unit": "node --test index.test.js",
+    "unit": "node --test test/index.test.js",
     "test": "npm run unit && eslint ."
   },
   "author": "Pascal Thormeier <pascal.thormeier@liip.ch>",

@@ -1,8 +1,9 @@
 const postcss = require('postcss')
 const { equal } = require('node:assert')
+const { sep } = require('node:path')
 const { test } = require('node:test')
 
-const plugin = require('./')
+const plugin = require('./../')
 
 async function run(input, output, opts = {}) {
   let result = await postcss([plugin(opts)]).process(input, { from: undefined })
@@ -10,10 +11,11 @@ async function run(input, output, opts = {}) {
   equal(result.warnings().length, 0)
 }
 
-/* Write tests here
-
 test('does something', async () => {
-  await run('a{ }', 'a{ }', { })
+  await run('a{ background-image: url(\'./assets/foobar.svg\'); }', 'a{ background-image: url(\'./assets/foobar.svg\'); }', {
+    entryPath: __dirname + sep + 'src',
+    to: __dirname + sep + 'dist',
+    assetsDestPath: __dirname + sep + 'dist' + sep + 'assets',
+  })
 })
 
-*/
