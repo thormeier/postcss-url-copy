@@ -12,10 +12,11 @@ async function run(input, output, opts = {}) {
 }
 
 test('does something', async () => {
-  await run('a{ background-image: url(\'./assets/foobar.svg\'); }', 'a{ background-image: url(\'./assets/foobar.svg\'); }', {
-    entryPath: __dirname + sep + 'src',
-    to: __dirname + sep + 'dist',
+  await run('a{ background-image: url(\'./assets/foobar.svg\'); }', 'a{ background-image: url(./assets/foobar.svg); }', {
+    destPath: __dirname + sep + 'dist',
     assetsDestPath: __dirname + sep + 'dist' + sep + 'assets',
+    transformUrlBeforeLoad: (url) => url.replace('.', __dirname + sep + 'src'),
+    transformUrlBeforeWrite: (url) => url.replace(__dirname + sep + 'dist', '.'),
   })
 })
 

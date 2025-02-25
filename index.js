@@ -5,12 +5,8 @@ const { isAbsolute, sep, resolve, basename } = require('path')
  * @type {import('postcss').PluginCreator}
  */
 module.exports = (opts = {}) => {
-  if (!opts.entryPath) {
-    opts.entryPath = '.'
-  }
-
-  if (!opts.to) {
-    opts.to = '.'
+  if (!opts.destPath) {
+    opts.destPath = '.'
   }
 
   if (!opts.assetsDestPath) {
@@ -25,20 +21,12 @@ module.exports = (opts = {}) => {
     opts.transformUrlBeforeWrite = (url) => url
   }
 
-  if (!existsSync(opts.entryPath)) {
-    throw new Error(`Entry path ${opts.entryPath} doesn't exist.`)
-  }
-
-  if (!isAbsolute(opts.entryPath)) {
-    throw new Error(`Entry path ${opts.entryPath} should be absolute.`)
-  }
-
-  if (!isAbsolute(opts.to)) {
-    throw new Error(`To path ${opts.to} should be absolute.`)
+  if (!isAbsolute(opts.destPath)) {
+    throw new Error(`destPath path ${opts.destPath} should be absolute.`)
   }
 
   if (!isAbsolute(opts.assetsDestPath)) {
-    throw new Error(`Assets dest path ${opts.assetsDestPath} should be absolute.`)
+    throw new Error(`assetsDestPath ${opts.assetsDestPath} should be absolute.`)
   }
 
   return {
@@ -47,10 +35,6 @@ module.exports = (opts = {}) => {
     Declaration (decl) {
       if (decl.value.startsWith('url(')) {
         let urlPath = decl.value.replace(/url\(\s*['"]?(.*?)['"]?\s*\)/ig, '$1')
-
-        if (!isAbsolute(urlPath)) {
-          urlPath = opts.entryPath + sep + urlPath
-        }
 
         urlPath = opts.transformUrlBeforeLoad(urlPath)
 
@@ -70,10 +54,9 @@ module.exports = (opts = {}) => {
 
         copyFileSync(resolvedPathUrl, destPath)
 
-        destPath = destPath.replace(opts.to, '.')
         destPath = opts.transformUrlBeforeWrite(destPath)
 
-        decl.value = destPath
+        decl.value = `url(${destPath})`
       }
     }
   }

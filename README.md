@@ -8,8 +8,7 @@ the CSS file).
 
 ```
 {
-  entryPath: string // Absolute path to where the CSS file is located that we're about to transform
-  to: string // Absolute path to where to write the distributable files lie
+  destPath: string // Absolute path to where to write the distributable files lie
   assetsDestPath: string // Absolute path to where to write the assets to
   transformUrlBeforeLoad: (url: string) => string // To transform the URL before the fileon disk is being loaded
   transformUrlBeforeWrite: (url: string) => string // To transform the URL before its written to the CSS file, gets result of transformUrlBeforeLoad
